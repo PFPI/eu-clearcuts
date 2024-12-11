@@ -4,18 +4,35 @@
  {{ navstring }}
 <div class="container-fluid">
 <div class="container-sm">
-<h1> Point {{ maincontent.FID }} in {{ maincontent.SITECODE }} in {{ maincontent.Region }}, {{ maincontent.Country }}</h1>
 
-<p>
+<h1> Point {{ maincontent.FID }} in {{ maincontent.SITECODE }} in {{ maincontent.Region }}, {{ maincontent.Country }}</h1>
+    <div id="map" class="p-3"></div>
+<p class="p-3">
 This point at lat: {{ maincontent.POINT_Y }}, lon: {{ maincontent.POINT_X }} in {{ maincontent.SITECODE }} was potentially disturbed in {{ maincontent.LossYr }} and after evaluation of satellite imagery, was rated as {{ maincontent.myRating }}.
 </p>
 </div>
-<div class="container-sm">
+<div class="container-sm p-3">
 <div class='juxtapose' data-showcredits='false'>
 <img src='{{ maincontent.Image1 }}' data-label='{{ maincontent.BDate }}' />
 <img src='{{ maincontent.Image2 }}' data-label='{{ maincontent.ADate }}' />
 </div>
 </div>
 </div>
+
+ {% endblock %}
+
+ {% block leafletscript %}
+  <script>
+  var map = L.map('map').setView([{{ maincontent.POINT_Y }}, {{ maincontent.POINT_X }}], 11);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+let itemPopupstring = "<h3>Point {{maincontent.FID}}</h3><br />This point in {{maincontent.SITECODE}} {{maincontent.SITENAME}} was rated as {{maincontent.myRating}}.";
+L.marker([{{ maincontent.POINT_Y }}, {{ maincontent.POINT_X }}]).bindPopup(itemPopupstring).addTo(map);
+
+ </script>
 
  {% endblock %}
