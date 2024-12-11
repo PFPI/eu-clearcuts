@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+ {{ navstring }}
+<div class="container-fluid">
+<div class="container-sm">
+<h1> Point {{ FID }} in {{ maincontent.SITECODE }} in {{ maincontent.Region }}, {{ maincontent.Country }}</h1>
+
+<p>
+This point at lat: {{ maincontent.POINT_Y }}, lon: {{ maincontent.POINT_X }} in {{ maincontent.SITECODE }} was potentially disturbed in {{ maincontent.LossYr }} and after evaluation of satellite imagery, was rated as {{ maincontent.myRating }}.
+</p>
+</div>
+<div class="container-sm">
+<div class='juxtapose' data-showcredits='false'>
+<img src='{{ maincontent.Image1 }}' data-label='{{ maincontent.BDate }}' />
+<img src='{{ maincontent.Image2 }}' data-label='{{ maincontent.ADate }}' />
+</div>
+</div>
+</div>
+
+ {% endblock %}
