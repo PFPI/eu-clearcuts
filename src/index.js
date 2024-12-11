@@ -11,8 +11,11 @@ console.log("Success!")
 const main = async() => {
 
   // START Getting the data, whether cached or fresh. if you need to get fresh data, comment/uncomment to swap the commands. 
+
+
     //const finalData = await brfxns.allData();
     //brfxns.writeCache(finalData);
+
     const finalData = brfxns.readCache();
     const finalIndex = brfxns.buildIndex(finalData);
     let rowCount = finalData.length;
@@ -26,33 +29,22 @@ const main = async() => {
      console.log("Full Data has " + rowCount + " rows and a last modified date of " + lastModDate + ".");
 
      console.log("There are " + finalIndex.length + " complete records in this database."); 
-    brfxns.writeCutFiles(finalData, "This is my inputted navstring"); //automatically returns a console.log message, you ain't crazy. Also, will need to modify this particular function and pass in the index.
+    
+     brfxns.writeCutFiles(finalData, finalNavString); //automatically returns a console.log message, you ain't crazy.
     // END Building individual point files. 
 
     // START building country files. This section could use some clean up!
+        listOfCountries.forEach(myCountry => {
+          const thisCountrysResults = countryfxns.filterCountry(finalIndex, myCountry);
+          const thisCountrysSites = countryfxns.buildSites(thisCountrysResults);
+          brfxns.writeCountryFiles(myCountry, finalNavString, thisCountrysSites);
+        });
+    // END building country files.
 
-      // *** need to figure out how to get the list of countries into the nav.  ***
-      // for each country...
-     listOfCountries.forEach(myCountry => {
-        thisCountrysResults = countryfxns.filterCountry(finalIndex, myCountry);
-        thisCountrysRegions = countryfxns.listRegions(thisCountrysResults);
-        //build the start of the string
-        let finalRegionString = nunjucks.render("country-head.njk", {country: myCountry, navstring: finalNavString});
-        thisCountrysRegions.forEach(myRegion => {
-          thisRegionsSites = countryfxns.filterRegion(thisCountrysResults, myRegion);
-          finalRegionString += nunjucks.render("region.njk", {title: myCountry, country: myCountry, region: myRegion, sites: thisRegionsSites});
-        }); // end thisCountrysRegions foreach
-        finalRegionString += nunjucks.render("country-foot.njk", {country: myCountry});
-        fse.outputFile("build/countries/" + myCountry + ".html", finalRegionString, err => { if(err) { console.log(err); } else { }});
-          // need to build a country.njk template for each country
-          // would prefer to list by region then sitecode
-
-      }); // end myCountry foreach
-
-      //build main index page
+    // START building index page. 
       const finalIndexString = nunjucks.render("index.njk", {navstring: finalNavString});
       fse.outputFile("build/index.html", finalIndexString, err => { if(err) { console.log(err); } else { }});
-
+    // END building index page. 
 
 }; //end main
 //call the main function

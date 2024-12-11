@@ -9,7 +9,9 @@ nunjucks.configure('./src/views', { autoescape: false });
 var brfxns = {};
 
 brfxns.cleandata = function(myrow){
+  if(myrow.LossYr < 2000){
     myrow.LossYr = Number(myrow.LossYr)+2000;
+  }
     myrow.myRating = myrow.Rating.value;
     myrow.Image1 = myrow.Images[0].url;
     myrow.Image2 = myrow.Images[1].url;
@@ -115,16 +117,13 @@ brfxns.returnMenu = function(finalIndex){
   return finalNavString;
 }
 
-brfxns.writeCutFiles = function(finalData, navstring = "This is my navstring"){
-
-  const finalIndex = this.buildIndex(finalData);
-  const finalNavString = this.returnMenu(finalIndex);
+brfxns.writeCutFiles = function(finalData, finalNavString){
   let myCount = 1;
   finalData.forEach(myrow => {
     // only work on complete rows
     if(myrow.Complete){
       //clean up sketchy vars
-      console.log(myrow);
+      console.log(myrow.FID + " in " + myrow.SITECODE);
       myrow = this.cleandata(myrow);
       //render the HTML
       myrow.finalHTML = nunjucks.render('clearcut.njk', {maincontent: myrow, navstring: finalNavString})
@@ -137,7 +136,17 @@ brfxns.writeCutFiles = function(finalData, navstring = "This is my navstring"){
   console.log("Wrote " + myCount + " clearcut site files to the build directory.");
  }
 
-
+brfxns.writeCountryFiles = function(myCountry, finalNavString, listRegions){
+   let myRenderString = nunjucks.render("country.njk", 
+              { country: myCountry, 
+                navstring: finalNavString, 
+                regions: listRegions
+              });
+  fse.outputFile("build/countries/" + myCountry + ".html", 
+                  myRenderString, 
+                  err => { if(err) { console.log(err); } else { }});
+console.log(myCountry);
+}
 
 
 module.exports = brfxns;

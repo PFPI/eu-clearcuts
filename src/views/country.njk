@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+ {{ navstring }}
+
+<div class="container-fluid">
+<div class="container-sm">
+    <h1> {{country }} </h1>
+
+{% for item in regions %}
+<h2> {{ item.region }} </h2>
+<ul>
+{% for site in item.sites %}
+<li> <a href='..{{ site.url }}'>{{ site.name }}</a></li>
+{% endfor %}
+</ul>
+{% endfor %}
+
+</div>
+</div>
+
+ {% endblock %}

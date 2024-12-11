@@ -2,10 +2,10 @@
  
  
  //declare empty object
- var countryfxns = {};
+ let countryfxns = {};
 
  countryfxns.listCountries = function(finalIndex){
-    var indexCountries = Array.from(new Set(finalIndex.map(({ country }) => country))).sort();
+   const indexCountries = Array.from(new Set(finalIndex.map(({ country }) => country))).sort();
     return indexCountries;
  }
 
@@ -15,13 +15,31 @@
  }
 
  countryfxns.listRegions = function(finalIndex){
-    var indexRegions = Array.from(new Set(finalIndex.map(({ region }) => region))).sort();
+    const indexRegions = Array.from(new Set(finalIndex.map(({ region }) => region))).sort();
     return indexRegions;
  }
 
  countryfxns.filterRegion = function(finalIndex, myregion){
     mydata = finalIndex.filter(fulldatarow => fulldatarow.region === myregion);
     return mydata;
+ }
+
+ countryfxns.buildSites = function(filteredIndex){
+   // I have a flat array of objects and I need a nested array by Region. 
+   //but this is filtered by region already
+   const countryName = filteredIndex[0].country;
+   //console.log(countryName);
+   const allRegions = this.listRegions(filteredIndex);
+   let finalBuiltSites = [];
+   allRegions.forEach(myregion => {
+      const updatedIndex = this.filterRegion(filteredIndex, myregion);
+      finalBuiltSites.push({ 
+                             region: myregion,
+                              sites: updatedIndex
+                           });
+   })
+   //console.dir(finalBuiltSites);
+   return finalBuiltSites;
  }
  //export to make available elsewhere
  module.exports = countryfxns;

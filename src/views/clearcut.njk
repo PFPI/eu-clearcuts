@@ -4,7 +4,7 @@
  {{ navstring }}
 <div class="container-fluid">
 <div class="container-sm">
-<h1> Point {{ FID }} in {{ maincontent.SITECODE }} in {{ maincontent.Region }}, {{ maincontent.Country }}</h1>
+<h1> Point {{ maincontent.FID }} in {{ maincontent.SITECODE }} in {{ maincontent.Region }}, {{ maincontent.Country }}</h1>
 
 <p>
 This point at lat: {{ maincontent.POINT_Y }}, lon: {{ maincontent.POINT_X }} in {{ maincontent.SITECODE }} was potentially disturbed in {{ maincontent.LossYr }} and after evaluation of satellite imagery, was rated as {{ maincontent.myRating }}.
