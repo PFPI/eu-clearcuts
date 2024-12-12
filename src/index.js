@@ -3,6 +3,7 @@
 const nunjucks = require("nunjucks");
 const brfxns = require("./brfxns");
 const countryfxns = require("./countryfxns");
+const leafletfxns = require("./leafletfxns");
 const fse = require('fs-extra');
 nunjucks.configure('./src/views', { autoescape: false });
 console.log("Success!")
@@ -37,12 +38,13 @@ const main = async() => {
         listOfCountries.forEach(myCountry => {
           const thisCountrysResults = countryfxns.filterCountry(finalIndex, myCountry);
           const thisCountrysSites = countryfxns.buildSites(thisCountrysResults);
-          brfxns.writeCountryFiles(myCountry, finalNavString, thisCountrysSites);
+          const thisCountrysCoords = leafletfxns.countryCoords(myCountry);
+          brfxns.writeCountryFiles(myCountry, finalNavString, thisCountrysSites, thisCountrysCoords);
         });
     // END building country files.
 
     // START building index page. 
-      const finalIndexString = nunjucks.render("index.njk", {navstring: finalNavString});
+      const finalIndexString = nunjucks.render("index.njk", {navstring: finalNavString, sites: finalData});
       fse.outputFile("build/index.html", finalIndexString, err => { if(err) { console.log(err); } else { }});
     // END building index page. 
 

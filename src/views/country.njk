@@ -7,7 +7,7 @@
 <div class="container-fluid">
 <div class="container-sm">
     <h1> {{country }} </h1>
-
+<div id="map" class="p-3"></div>
 {% for item in regions %}
 <h2> {{ item.region }} </h2>
 <ul>
@@ -19,5 +19,70 @@
 
 </div>
 </div>
+
+ {% endblock %}
+
+  {% block leafletscript %}
+  <script>
+
+  var map = L.map('map').setView([{{ coords.lat }}, {{ coords.lon }}], {{coords.zoom}});
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+// define icons
+// https://github.com/pointhi/leaflet-color-markers
+var greyIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+var yellowIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+var redIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+})
+
+
+{% for item in regions %}
+{% for site in item.sites %}
+if("{{site.rating}}" == "Probable Clearcut"){
+  L.marker(
+      [{{ site.lat }}, {{ site.lon }}], {icon: redIcon})
+      .bindPopup("This is a probable clearcut. Go to the <a href='..{{ site.url }}'>{{ site.name }}</a> page for more detail.")
+      .addTo(map);
+} else if("{{site.rating}}" == "Probable Thinning"){
+  L.marker(
+      [{{ site.lat }}, {{ site.lon }}], {icon: yellowIcon})
+      .bindPopup("This is probably thinning. Go to the <a href='..{{ site.url }}'>{{ site.name }}</a> page for more detail.")
+      .addTo(map);
+} else{
+  L.marker(
+      [{{ site.lat }}, {{ site.lon }}], {icon: greyIcon})
+      .bindPopup("Go to the <a href='..{{ site.url }}'>{{ site.name }}</a> page for more detail.")
+      .addTo(map);
+}
+{% endfor %}
+{% endfor %}
+
+ </script>
 
  {% endblock %}

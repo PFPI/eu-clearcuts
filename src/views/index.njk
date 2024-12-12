@@ -8,5 +8,70 @@
     <p>
         Welcome to the Natura 2000 logging database. Inside, you'll find a selection of before and after pictures that showcase logging that has happened within the boundaries of Natura 2000 sites across Europe. This database selects from regions with the most forest clearing activity within Natura 2000 sites. Not every area flagged as potential forest clearing actually shows evidence of logging. In some cases, ground cover is miscategorized as forest when it is actually something else - we've classified examples like these as "false positives." In other cases, satellite imagery did not capture enough clear pictures for visual confirmation - we've classified examples like these as "undeterminable."
     </p>
+
+        <div id="map" class="p-3"></div>
 </div>
     {% endblock %}
+
+  {% block leafletscript %}
+  <script>
+
+  var map = L.map('map').setView([54.5260, 15.2551], 4);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+// define icons
+// https://github.com/pointhi/leaflet-color-markers
+var greyIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+var yellowIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+var redIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+})
+
+
+{% for site in sites %}
+if("{{site.myRating}}" == "Probable Clearcut"){
+  L.marker(
+      [{{ site.POINT_Y }}, {{ site.POINT_X }}], {icon: redIcon})
+      .bindPopup("This is a probable clearcut. Go to the <a href='{{ site.indexURL }}'>{{ site.title }}</a> page for more detail.")
+      .addTo(map);
+} else if("{{site.myRating}}" == "Probable Thinning"){
+  L.marker(
+      [{{ site.POINT_Y }}, {{ site.POINT_X }}], {icon: yellowIcon})
+      .bindPopup("This is probable thinning. Go to the <a href='{{ site.indexURL }}'>{{ site.title }}</a> page for more detail.")
+      .addTo(map);
+} else{
+  L.marker(
+      [{{ site.POINT_Y }}, {{ site.POINT_X }}], {icon: greyIcon})
+      .bindPopup("Go to the <a href='{{ site.indexURL }}'>{{ site.title }}</a> page for more detail.")
+      .addTo(map);
+}
+{% endfor %}
+
+ </script>
+
+ {% endblock %}

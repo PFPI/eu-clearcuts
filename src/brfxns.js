@@ -104,7 +104,10 @@ brfxns.buildIndex = function(finalData){
                                   country: myrow.Country,
                                   region: myrow.Region,
                                   sitecode: myrow.SITECODE,
-                                  name: myrow.indexName
+                                  name: myrow.indexName,
+                                  lat: myrow.POINT_Y,
+                                  lon: myrow.POINT_X,
+                                  rating: myrow.myRating
                  });
     } //end if complete
   })//end foreach
@@ -136,11 +139,12 @@ brfxns.writeCutFiles = function(finalData, finalNavString){
   console.log("Wrote " + myCount + " clearcut site files to the build directory.");
  }
 
-brfxns.writeCountryFiles = function(myCountry, finalNavString, listRegions){
+brfxns.writeCountryFiles = function(myCountry, finalNavString, listRegions, countryCoords){
    let myRenderString = nunjucks.render("country.njk", 
               { country: myCountry, 
                 navstring: finalNavString, 
-                regions: listRegions
+                regions: listRegions,
+                coords: countryCoords
               });
   fse.outputFile("build/countries/" + myCountry + ".html", 
                   myRenderString, 
