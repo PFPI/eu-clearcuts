@@ -15,9 +15,9 @@ const main = async() => {
   // START Getting the data, whether cached or fresh. if you need to get fresh data, comment/uncomment to swap the commands. 
   let finalData = brfxns.readCache();
   if(args.length>0){
-    console.log("There are args passed.")
+    console.log("There were args passed to the terminal.")
     if(args[0]){
-      console.log("The first arg was true.")
+      console.log("The first arg was true, so I'm rebuilding the cache.")
       finalData = await brfxns.allData();
       brfxns.writeCache(finalData);
     }

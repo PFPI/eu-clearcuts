@@ -3,6 +3,7 @@ const axios = require("axios");
 const nunjucks = require("nunjucks");
 const fs = require("fs");
 const fse = require("fs-extra");
+const eeafxns = require("./eeafxns");
 nunjucks.configure('./src/views', { autoescape: false });
 
 // declare module.exports object
@@ -22,6 +23,16 @@ brfxns.cleandata = function(myrow){
     return myrow;
 };
 
+brfxns.writeCache = function (finalData) {
+  fs.writeFile('mydbdata.json', JSON.stringify(finalData), (error) => {
+    if (error) throw error;
+  });
+};
+
+brfxns.readCache = function(){
+  const myfile = fs.readFileSync("./mydbdata.json", 'utf8');
+  return JSON.parse(myfile);
+ } 
 
 brfxns.getData = function(page) {
     return axios({
@@ -84,16 +95,7 @@ brfxns.sameDates = function(dbDate,newDate){
   }
  }
 
-brfxns.writeCache = function(finalData){
-  fs.writeFile('mydbdata.json', JSON.stringify(finalData), (error) => {
-    if (error) throw error;
-  });
- }
 
-brfxns.readCache = function(){
-  const myfile = fs.readFileSync("./mydbdata.json", 'utf8');
-  return JSON.parse(myfile);
- }
 
 brfxns.buildIndex = function(finalData){
   let finalIndex = [];
@@ -128,6 +130,11 @@ brfxns.writeCutFiles = function(finalData, finalNavString){
       //clean up sketchy vars
       //console.log("brfxns.writeCutFiles: Complete row " + myrow.FID + " in " + myrow.SITECODE);
       myrow = this.cleandata(myrow);
+
+    //   IMPORTANT DONT RUN THIS 400 TIMES YOU NEED TO DO A CACHE INSTEAD.
+      // let n2kPolygons = eeafxns.findSitePolygon(myrow.SITECODE);
+
+
       //render the HTML
       myrow.finalHTML = nunjucks.render('clearcut.njk', {maincontent: myrow, navstring: finalNavString})
       //write the HTML
@@ -151,6 +158,5 @@ brfxns.writeCountryFiles = function(myCountry, finalNavString, listRegions, coun
                   err => { if(err) { console.log(err); } else { }});
 console.log("brfxns.writeCountryFiles: Processed " + myCountry);
 }
-
 
 module.exports = brfxns;
