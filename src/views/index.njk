@@ -2,14 +2,61 @@
 
 {% block content %} 
 {{ navstring }}
-<div class="container-fluid">
-   <h1> The EU Clearcuts Project</h1>
+<a id="top"></a>
+<div class="container-fluid bg-light">
 
-    <p>
-        Welcome to the Natura 2000 logging database. Inside, you'll find a selection of before and after pictures that showcase logging that has happened within the boundaries of Natura 2000 sites across Europe. This database selects from regions with the most forest clearing activity within Natura 2000 sites. Not every area flagged as potential forest clearing actually shows evidence of logging. In some cases, ground cover is miscategorized as forest when it is actually something else - we've classified examples like these as "false positives." In other cases, satellite imagery did not capture enough clear pictures for visual confirmation - we've classified examples like these as "undeterminable."
-    </p>
+  <div class="container col-xxl-8 px-4 py-5" >
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+      <div class="col-10 col-sm-8 col-lg-6">
+        <img src="./assets/clearcut-example.png" class="d-block mx-lg-auto img-fluid rounded" alt="An example clearcut in Natura 2000 sites" width="700" height="500" loading="lazy">
+      </div>
+      <div class="col-lg-6">
+        <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">The EU Clearcuts Project</h1>
+        <p class="lead">Welcome to the Natura 2000 logging database. Inside, you'll find a selection of before and after pictures that showcase logging that has happened within the boundaries of Natura 2000 sites across Europe. Selected from the regions with the most logging activity, the examples found in this database are indicative of a widespread pattern of logging in protected areas in Europe. </p>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+          <a class="btn btn-primary btn-lg px-4 me-md-2" href="#about">About The Project</a>
+          <a class="btn btn-outline-secondary btn-lg px-4" href="#methods">Methods and Sources</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        <div id="map" class="p-3"></div>
+  <div class="bg-dark text-secondary px-4 py-5 text-center">
+    <div class="py-5">
+      <h2 class="display-5 fw-bold text-white">Clearcuts in Natura 2000 Network Sites</h2>
+      <div class="col-lg-6 mx-auto">
+              <p class="lead text-white mb-4">These are potential clearcuts found across the EU in some of the regions with the highest disturbance activity in Natura 2000 network sites. Click on a pushpin to see more information and visit its individual site page to view the before/after images.</p>
+        <div id="map" class="p-3 m-6">
+        </div>
+        <a class="btn btn-outline-warning btn-lg p-6 my-3" href="#top">Back To Top</a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="px-4 py-5 my-5 text-center">
+    <h2 class="display-5 fw-bold text-body-emphasis" id="about">About The Project</h2>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mb-4">Established by the European Union Habitats Directive in 1992, Natura 2000 (N2K) is a network of protected areas across the EU meant to protect rare and threatened habitats and species. While no EU country has outlawed logging in these sites, these sites should be managed for biodiversity and habitat protection, not for economic gain. </p>
+      <p class="lead mb-4">We explored the countrywide and region-wide patterns of potential forest loss in N2K sites. Potential patches of forest loss were present in ~ 73% of terrestrial N2K sites. 61% of these potentially logged N2K sites had higher rates of forest loss (hectares/year) after 2015.</p>
+              <a class="btn btn-outline-info btn-lg p-6 my-3" href="#top">Back To Top</a>
+    </div>
+  </div>
+
+  <div class="bg-dark text-secondary px-4 py-5 text-center">
+    <h2 class="display-5 fw-bold text-white" id="methods">Methodology</h2>
+    <div class="col-lg-6 mx-auto">
+      <h3 class="text-white my-3">Data Sources</h3>
+      <p class="lead mb-4 text-white">We used two primary data sources for this project: <a class="link-info" href="https://www.eea.europa.eu/en/datahub/datahubitem-view/6fc8ad2d-195d-40f4-bdec-576e7d1268e4" target="_blank">version 2022 of the Natura 2000 vector files</a>, and the <a class="link-info" href="https://glad.earthengine.app/view/global-forest-change#bl=1;old=0;dl=1;lon=27.336136389156234;lat=58.02775483630586;zoom=7;" target="_blank">Global Forest Change dataset</a>, 2001-2023. </p>
+
+      <h3 class="my-3 text-white">Forest Clearing Statistics</h3>
+      <p class="lead mb-4 text-white">In ArcGIS Pro, we overlaid Natura 2000 site boundaries with areas of forest loss identified from satellite imagery using the “Tabulate Area” function. We exported this data and converted it into hectare units. Data were further prepared and analyzed in R and then formatted for final publication in Microsoft Excel.</p>
+
+      <h3 class="my-3 text-white">Site Verification</h3>
+      <p class="lead mb-4 text-white">The data were split by state/province for sub-country analysis. We selected states/provinces with the highest levels of potential forest clearing in N2K sites (top 10%) for further verification. We loaded randomly sampled points representing potential forest clearing into Google Earth Pro for visual verification using the timeline feature. We built the web interface as a static site using NodeJS, with the addition of JuxtaposeJS and LeafletJS libraries, and uploaded the final build files to GitHub for archival and collaborative purposes. </p>
+              <a class="btn btn-outline-warning btn-lg p-6 my-3" href="#top">Back To Top</a>
+    </div>
+  </div>
+  
 </div>
     {% endblock %}
 
@@ -57,17 +104,17 @@ var redIcon = new L.Icon({
 if("{{site.myRating}}" == "Probable Clearcut"){
   L.marker(
       [{{ site.POINT_Y }}, {{ site.POINT_X }}], {icon: redIcon})
-      .bindPopup("This is a probable clearcut. Go to the <a href='{{ site.indexURL }}'>{{ site.title }}</a> page for more detail.")
+      .bindPopup("This is a probable clearcut. Go to the <a href='{{ site.indexURL }}' target='_blank'>{{ site.title }}</a> page for more detail.")
       .addTo(map);
 } else if("{{site.myRating}}" == "Probable Thinning"){
   L.marker(
       [{{ site.POINT_Y }}, {{ site.POINT_X }}], {icon: yellowIcon})
-      .bindPopup("This is probable thinning. Go to the <a href='{{ site.indexURL }}'>{{ site.title }}</a> page for more detail.")
+      .bindPopup("This is probable thinning. Go to the <a href='{{ site.indexURL }}' target='_blank'>{{ site.title }}</a> page for more detail.")
       .addTo(map);
 } else{
   L.marker(
       [{{ site.POINT_Y }}, {{ site.POINT_X }}], {icon: greyIcon})
-      .bindPopup("Go to the <a href='{{ site.indexURL }}'>{{ site.title }}</a> page for more detail.")
+      .bindPopup("Go to the <a href='{{ site.indexURL }}' target='_blank'>{{ site.title }}</a> page for more detail.")
       .addTo(map);
 }
 {% endfor %}
