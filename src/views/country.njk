@@ -67,17 +67,17 @@ var redIcon = new L.Icon({
 if("{{site.rating}}" == "Probable Clearcut"){
   L.marker(
       [{{ site.lat }}, {{ site.lon }}], {icon: redIcon})
-      .bindPopup("This is a probable clearcut. Go to the <a href='..{{ site.url }}'>{{ site.name }}</a> page for more detail.")
+      .bindPopup("This is a probable clearcut. Go to the <a href='..{{ site.url }}' target='_blank'>{{ site.name }}</a> page for more detail.")
       .addTo(map);
 } else if("{{site.rating}}" == "Probable Thinning"){
   L.marker(
       [{{ site.lat }}, {{ site.lon }}], {icon: yellowIcon})
-      .bindPopup("This is probably thinning. Go to the <a href='..{{ site.url }}'>{{ site.name }}</a> page for more detail.")
+      .bindPopup("This is probably thinning. Go to the <a href='..{{ site.url }}' target='_blank'>{{ site.name }}</a> page for more detail.")
       .addTo(map);
 } else{
   L.marker(
       [{{ site.lat }}, {{ site.lon }}], {icon: greyIcon})
-      .bindPopup("Go to the <a href='..{{ site.url }}'>{{ site.name }}</a> page for more detail.")
+      .bindPopup("Go to the <a href='..{{ site.url }}' target='_blank'>{{ site.name }}</a> page for more detail.")
       .addTo(map);
 }
 {% endfor %}

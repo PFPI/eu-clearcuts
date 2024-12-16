@@ -6,7 +6,7 @@ const fse = require("fs-extra");
 nunjucks.configure('./src/views', { autoescape: false });
 
 // declare module.exports object
-var brfxns = {};
+let brfxns = {};
 
 brfxns.cleandata = function(myrow){
   if(myrow.LossYr < 2000){
@@ -42,27 +42,27 @@ brfxns.allData = async function(defPageSize = 100){
     var pageData = firstpage.data.results;
     var rowCount = pageData.length;
     if(rowCount > 0){
-      console.log("Starting page 1 with " + rowCount + " results.")
+      console.log("brfxns.allData: Starting page 1 with " + rowCount + " results.")
       finalData = finalData.concat(pageData);
       pageNum += 1;
       //console.log(finalData)
     } else {
-      console.log("Check your configuration, I couldn't find any results.");
+      console.log("brfxns.allData: Check your configuration, I couldn't find any results.");
       return finalData;
     }
 
     // start a while loop for additional pages. 
-    console.log("Starting the while loop for additional pages.");
+    console.log("brfxns.allData: Starting the while loop for additional pages.");
     while(rowCount == defPageSize){
       let nextpage = await this.getData(pageNum);
       pageData = nextpage.data.results;
       rowCount = pageData.length;
-      console.log("Page " + pageNum + " has " + rowCount + " results.")
+      console.log("brfxns.allData: Page " + pageNum + " has " + rowCount + " results.")
       if(rowCount > 0){
         finalData = finalData.concat(pageData);
         pageNum += 1;
       } else{
-        console.log("Page " + pageNum + " had no results.");
+        console.log("brfxns.allData: Page " + pageNum + " had no results.");
         return finalData;
       }
     }
@@ -126,7 +126,7 @@ brfxns.writeCutFiles = function(finalData, finalNavString){
     // only work on complete rows
     if(myrow.Complete){
       //clean up sketchy vars
-      console.log(myrow.FID + " in " + myrow.SITECODE);
+      //console.log("brfxns.writeCutFiles: Complete row " + myrow.FID + " in " + myrow.SITECODE);
       myrow = this.cleandata(myrow);
       //render the HTML
       myrow.finalHTML = nunjucks.render('clearcut.njk', {maincontent: myrow, navstring: finalNavString})
@@ -136,7 +136,7 @@ brfxns.writeCutFiles = function(finalData, finalNavString){
     } // end if complete
 
   }); // end foreach
-  console.log("Wrote " + myCount + " clearcut site files to the build directory.");
+  console.log("brfxns.writeCutFiles: Wrote " + myCount + " clearcut site files to the build directory.");
  }
 
 brfxns.writeCountryFiles = function(myCountry, finalNavString, listRegions, countryCoords){
@@ -149,7 +149,7 @@ brfxns.writeCountryFiles = function(myCountry, finalNavString, listRegions, coun
   fse.outputFile("build/countries/" + myCountry + ".html", 
                   myRenderString, 
                   err => { if(err) { console.log(err); } else { }});
-console.log(myCountry);
+console.log("brfxns.writeCountryFiles: Processed " + myCountry);
 }
 
 

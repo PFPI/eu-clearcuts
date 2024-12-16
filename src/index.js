@@ -5,6 +5,7 @@ const brfxns = require("./brfxns");
 const countryfxns = require("./countryfxns");
 const leafletfxns = require("./leafletfxns");
 const fse = require('fs-extra');
+const args = process.argv.slice(2);
 nunjucks.configure('./src/views', { autoescape: false });
 console.log("Success!")
 
@@ -12,12 +13,15 @@ console.log("Success!")
 const main = async() => {
 
   // START Getting the data, whether cached or fresh. if you need to get fresh data, comment/uncomment to swap the commands. 
-
-
-    //const finalData = await brfxns.allData();
-    //brfxns.writeCache(finalData);
-
-    const finalData = brfxns.readCache();
+  let finalData = brfxns.readCache();
+  if(args.length>0){
+    console.log("There are args passed.")
+    if(args[0]){
+      console.log("The first arg was true.")
+      finalData = await brfxns.allData();
+      brfxns.writeCache(finalData);
+    }
+  }
     const finalIndex = brfxns.buildIndex(finalData);
     let rowCount = finalData.length;
     const lastModDate = brfxns.findLastMod(finalData);
@@ -27,9 +31,9 @@ const main = async() => {
 
     // START processing the data into an index and individual point files. 
 
-     console.log("Full Data has " + rowCount + " rows and a last modified date of " + lastModDate + ".");
+     console.log("index.js: Full Data has " + rowCount + " rows and a last modified date of " + lastModDate + ".");
 
-     console.log("There are " + finalIndex.length + " complete records in this database."); 
+     console.log("index.js: There are " + finalIndex.length + " complete records in this database."); 
     
      brfxns.writeCutFiles(finalData, finalNavString); //automatically returns a console.log message, you ain't crazy.
     // END Building individual point files. 
@@ -46,6 +50,7 @@ const main = async() => {
     // START building index page. 
       const finalIndexString = nunjucks.render("index.njk", {navstring: finalNavString, sites: finalData});
       fse.outputFile("build/index.html", finalIndexString, err => { if(err) { console.log(err); } else { }});
+      console.log("Finished building index")
     // END building index page. 
 
 }; //end main
