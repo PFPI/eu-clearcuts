@@ -3,6 +3,7 @@ config.js
 mydbdata.json
 package-lock.json
 changelog.txt
+mypolygondata.json
 
 # Logs
 logs
