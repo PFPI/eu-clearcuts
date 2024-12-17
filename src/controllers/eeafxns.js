@@ -43,17 +43,3 @@ eeafxns.findSitePolygon = async function(sitecode, verbose=false){
  return starterCache[0];
 
 }
-
-
-eeafxns.writePolygonCache = function(finalData){
-  fs.writeFile('mypolygondata.json', JSON.stringify(finalData), (error) => {
-    if (error) throw error;
-  });
- }
-
-eeafxns.readPolygonCache = function(){
-  const myfile = fs.readFileSync("./mypolygondata.json", 'utf8');
-  return JSON.parse(myfile);
- }
-
-module.exports = eeafxns;

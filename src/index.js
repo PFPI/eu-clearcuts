@@ -1,9 +1,10 @@
 
 // load required files
 const nunjucks = require("nunjucks");
-const brfxns = require("./brfxns");
-const countryfxns = require("./countryfxns");
-const leafletfxns = require("./leafletfxns");
+const countryfxns = require("./controllers/countryfxns");
+const leafletfxns = require("./controllers/leafletfxns");
+const baserow = require("./controllers/baserow");
+const fileio = require("./controllers/fileio");
 const fse = require('fs-extra');
 const args = process.argv.slice(2);
 nunjucks.configure('./src/views', { autoescape: false });
@@ -13,20 +14,17 @@ console.log("Success!")
 const main = async() => {
 
   // START Getting the data, whether cached or fresh. if you need to get fresh data, comment/uncomment to swap the commands. 
-  let finalData = brfxns.readCache();
-  if(args.length>0){
-    console.log("There were args passed to the terminal.")
-    if(args[0]){
-      console.log("The first arg was true, so I'm rebuilding the cache.")
-      finalData = await brfxns.allData();
-      brfxns.writeCache(finalData);
+  let finalData = fileio.readCutCache();
+  if(args[0]){
+      console.log("I'm rebuilding the cache.")
+      finalData = await baserow.getAllData();
+      fileio.writeCutCache(finalData);
     }
-  }
-    const finalIndex = brfxns.buildIndex(finalData);
+    const finalIndex = baserow.buildIndex(finalData);
     let rowCount = finalData.length;
-    const lastModDate = brfxns.findLastMod(finalData);
+    const lastModDate = baserow.findLastMod(finalData);
     const listOfCountries = countryfxns.listCountries(finalIndex);  
-    const finalNavString = brfxns.returnMenu(finalIndex);
+    const finalNavString = fileio.writeMenu(finalIndex);
     // END Getting the data
 
     // START processing the data into an index and individual point files. 
@@ -35,7 +33,7 @@ const main = async() => {
 
      console.log("index.js: There are " + finalIndex.length + " complete records in this database."); 
     
-     brfxns.writeCutFiles(finalData, finalNavString); //automatically returns a console.log message, you ain't crazy.
+     fileio.writeCutFiles(finalData, finalNavString); //automatically returns a console.log message, you ain't crazy.
     // END Building individual point files. 
 
     // START building country files. This section could use some clean up!
@@ -43,7 +41,7 @@ const main = async() => {
           const thisCountrysResults = countryfxns.filterCountry(finalIndex, myCountry);
           const thisCountrysSites = countryfxns.buildSites(thisCountrysResults);
           const thisCountrysCoords = leafletfxns.countryCoords(myCountry);
-          brfxns.writeCountryFiles(myCountry, finalNavString, thisCountrysSites, thisCountrysCoords);
+          fileio.writeCountryFiles(myCountry, finalNavString, thisCountrysSites, thisCountrysCoords);
         });
     // END building country files.
 
