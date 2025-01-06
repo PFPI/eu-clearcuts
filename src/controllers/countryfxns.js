@@ -1,5 +1,6 @@
 // required modules 
- 
+ let fileio = require("./fileio");
+ let leafletfxns = require("./leafletfxns");
  
  //declare empty object
  let countryfxns = {};
@@ -41,5 +42,17 @@
    //console.dir(finalBuiltSites);
    return finalBuiltSites;
  }
+
+countryfxns.buildCountryFiles = function(listOfCountries, finalIndex, finalNavString){
+        listOfCountries.forEach(myCountry => {
+          const thisCountrysResults = this.filterCountry(finalIndex, myCountry);
+          const thisCountrysSites = this.buildSites(thisCountrysResults);
+          const thisCountrysCoords = leafletfxns.countryCoords(myCountry);
+          fileio.writeCountryFiles(myCountry, finalNavString, thisCountrysSites, thisCountrysCoords);
+        });
+
+}
+
+
  //export to make available elsewhere
  module.exports = countryfxns;

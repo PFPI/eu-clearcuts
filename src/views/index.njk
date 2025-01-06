@@ -112,10 +112,10 @@ if("{{site.myRating}}" == "Probable Clearcut"){
       .bindPopup("This is probable thinning. Go to the <a href='{{ site.indexURL }}' target='_blank'>{{ site.title }}</a> page for more detail.")
       .addTo(map);
 } else{
-  L.marker(
-      [{{ site.POINT_Y }}, {{ site.POINT_X }}], {icon: greyIcon})
-      .bindPopup("Go to the <a href='{{ site.indexURL }}' target='_blank'>{{ site.title }}</a> page for more detail.")
-      .addTo(map);
+  //L.marker(
+    //  [{{ site.POINT_Y }}, {{ site.POINT_X }}], {icon: greyIcon})
+    //  .bindPopup("Go to the <a href='{{ site.indexURL }}' target='_blank'>{{ site.title }}</a> page for more detail.")
+     // .addTo(map);
 }
 {% endfor %}
 
